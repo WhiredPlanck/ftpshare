@@ -102,8 +102,8 @@ class ServiceAccountActivity : BaseActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.action_main_add -> {
                 if (FtpService.isFTPServiceRunning()) {
                     CommonUtils.showSnackBarOfFtpServiceIsRunning(this);

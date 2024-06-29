@@ -46,25 +46,15 @@ public class DisconnectSelectionDialog extends AlertDialog implements View.OnCli
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            default:
-                break;
-            case R.id.dialog_disconnection_none: {
-                selection = Constants.PreferenceConsts.AUTO_STOP_NONE;
-            }
-            break;
-            case R.id.dialog_disconnection_wifi: {
-                selection = Constants.PreferenceConsts.AUTO_STOP_WIFI_DISCONNECTED;
-            }
-            break;
-            case R.id.dialog_disconnection_ap: {
-                selection = Constants.PreferenceConsts.AUTO_STOP_AP_DISCONNECTED;
-            }
-            break;
-            case R.id.dialog_disconnect_time: {
-                selection = Constants.PreferenceConsts.AUTO_STOP_TIME_COUNT;
-            }
-            break;
+        int id = v.getId();
+        if (id == R.id.dialog_disconnection_none) {
+            selection = Constants.PreferenceConsts.AUTO_STOP_NONE;
+        } else if (id == R.id.dialog_disconnection_wifi) {
+            selection = Constants.PreferenceConsts.AUTO_STOP_WIFI_DISCONNECTED;
+        } else if (id == R.id.dialog_disconnection_ap) {
+            selection = Constants.PreferenceConsts.AUTO_STOP_AP_DISCONNECTED;
+        } else if (id == R.id.dialog_disconnect_time) {
+            selection = Constants.PreferenceConsts.AUTO_STOP_TIME_COUNT;
         }
         refreshViews();
     }

@@ -90,15 +90,15 @@ class FtpClientActivity : BaseActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == R.id.action_close) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_close) {
             setResult(RESULT_CANCELED)
             finish()
         }
-        if (item?.itemId == android.R.id.home) {
+        if (item.itemId == android.R.id.home) {
             onBackPressed()
         }
-        if (item?.itemId == R.id.action_new_folder) {
+        if (item.itemId == R.id.action_new_folder) {
             createAlertDialogBuilder(resources.getString(R.string.word_new_folder), resources.getString(R.string.word_new_folder), resources.getString(R.string.dialog_new_folder_hint))
                     .show().apply {
                         getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
@@ -124,7 +124,7 @@ class FtpClientActivity : BaseActivity() {
 
                     }
         }
-        if (item?.itemId == R.id.action_delete) {
+        if (item.itemId == R.id.action_delete) {
             val deleteList = adapter?.getSelectedItems() ?: ArrayList(0)
             var max = deleteList.size.coerceAtMost(100)
             val b: StringBuilder = StringBuilder()
@@ -184,10 +184,10 @@ class FtpClientActivity : BaseActivity() {
                 }
             }
         }
-        if (item?.itemId == R.id.action_select_all) {
+        if (item.itemId == R.id.action_select_all) {
             adapter?.setSelectedState(true)
         }
-        if (item?.itemId == R.id.action_select_all_off) {
+        if (item.itemId == R.id.action_select_all_off) {
             adapter?.setSelectedState(false)
         }
         return super.onOptionsItemSelected(item)

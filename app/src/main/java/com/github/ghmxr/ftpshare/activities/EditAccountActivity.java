@@ -48,36 +48,29 @@ public class EditAccountActivity extends AccountActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            default:
-                break;
-            case R.id.action_account_save: {
-                if (save2DB(this.item.id) >= 0) {
-                    setResult(RESULT_OK);
-                    finish();
-                    return true;
-                }
-
-            }
-            break;
-            case R.id.action_account_delete: {
-                long time = System.currentTimeMillis();
-                if (FtpService.isFTPServiceRunning()) {
-                    Snackbar.make(findViewById(android.R.id.content), getResources().getString(R.string.attention_ftp_is_running), Snackbar.LENGTH_SHORT).show();
-                    return true;
-                }
-                if (time - first_clicked_delete > 1000) {
-                    Snackbar.make(findViewById(android.R.id.content), getResources().getString(R.string.attention_delete_confirm), Snackbar.LENGTH_SHORT).show();
-                    first_clicked_delete = time;
-                    return true;
-                }
-                if (deleteRow(this.item.id) <= 0) {
-                    Toast.makeText(this, "Can not find the row", Toast.LENGTH_SHORT).show();
-                }
+        int itemId = item.getItemId();
+        if (itemId == R.id.action_account_save) {
+            if (save2DB(this.item.id) >= 0) {
                 setResult(RESULT_OK);
                 finish();
+                return true;
             }
-            break;
+        } else if (itemId == R.id.action_account_delete) {
+            long time = System.currentTimeMillis();
+            if (FtpService.isFTPServiceRunning()) {
+                Snackbar.make(findViewById(android.R.id.content), getResources().getString(R.string.attention_ftp_is_running), Snackbar.LENGTH_SHORT).show();
+                return true;
+            }
+            if (time - first_clicked_delete > 1000) {
+                Snackbar.make(findViewById(android.R.id.content), getResources().getString(R.string.attention_delete_confirm), Snackbar.LENGTH_SHORT).show();
+                first_clicked_delete = time;
+                return true;
+            }
+            if (deleteRow(this.item.id) <= 0) {
+                Toast.makeText(this, "Can not find the row", Toast.LENGTH_SHORT).show();
+            }
+            setResult(RESULT_OK);
+            finish();
         }
         return super.onOptionsItemSelected(item);
     }

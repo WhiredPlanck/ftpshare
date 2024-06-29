@@ -126,152 +126,134 @@ public class MainFragment extends Fragment implements View.OnClickListener, FtpS
     @Override
     public void onClick(View v) {
         if (getContext() == null || getActivity() == null || getView() == null) return;
-        switch (v.getId()) {
-            default:
-                break;
-            case R.id.main_area: {
-                if (!FtpService.isFTPServiceRunning()) {
-                    if (FtpService.startService(getActivity())) {
-                        viewGroup_main.setClickable(false);
-                        switchCompat.setChecked(true);
-                        switchCompat.setEnabled(false);
-                        tv_main.setText(getResources().getString(R.string.attention_opening_ftp));
-                    }
-                } else {
+        int id = v.getId();
+        if (id == R.id.main_area) {
+            if (!FtpService.isFTPServiceRunning()) {
+                if (FtpService.startService(getActivity())) {
                     viewGroup_main.setClickable(false);
-                    switchCompat.setChecked(false);
+                    switchCompat.setChecked(true);
                     switchCompat.setEnabled(false);
-                    tv_main.setText(getResources().getString(R.string.attention_closing_ftp));
-                    FtpService.stopService();
+                    tv_main.setText(getResources().getString(R.string.attention_opening_ftp));
                 }
+            } else {
+                viewGroup_main.setClickable(false);
+                switchCompat.setChecked(false);
+                switchCompat.setEnabled(false);
+                tv_main.setText(getResources().getString(R.string.attention_closing_ftp));
+                FtpService.stopService();
             }
-            break;
-            case R.id.port_area: {
-                if (FtpService.isFTPServiceRunning()) {
-                    CommonUtils.showSnackBarOfFtpServiceIsRunning(getActivity());
-                    return;
-                }
-                View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_with_edittext, null);
-                final EditText edit = dialogView.findViewById(R.id.dialog_edittext);
-                edit.setInputType(InputType.TYPE_CLASS_NUMBER);
-                edit.setSingleLine(true);
-                edit.setHint(getResources().getString(R.string.item_port_hint));
-                edit.setText(String.valueOf(settings.getInt(Constants.PreferenceConsts.PORT_NUMBER, Constants.PreferenceConsts.PORT_NUMBER_DEFAULT)));
-                final AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                        .setTitle(getResources().getString(R.string.item_port))
-                        .setView(dialogView)
-                        .setPositiveButton(getResources().getString(R.string.dialog_button_confirm), null)
-                        .setNegativeButton(getResources().getString(R.string.dialog_button_cancel), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+        } else if (id == R.id.port_area) {
+            if (FtpService.isFTPServiceRunning()) {
+                CommonUtils.showSnackBarOfFtpServiceIsRunning(getActivity());
+                return;
+            }
+            View dialogView = LayoutInflater.from(getActivity()).inflate(R.layout.layout_with_edittext, null);
+            final EditText edit = dialogView.findViewById(R.id.dialog_edittext);
+            edit.setInputType(InputType.TYPE_CLASS_NUMBER);
+            edit.setSingleLine(true);
+            edit.setHint(getResources().getString(R.string.item_port_hint));
+            edit.setText(String.valueOf(settings.getInt(Constants.PreferenceConsts.PORT_NUMBER, Constants.PreferenceConsts.PORT_NUMBER_DEFAULT)));
+            final AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                    .setTitle(getResources().getString(R.string.item_port))
+                    .setView(dialogView)
+                    .setPositiveButton(getResources().getString(R.string.dialog_button_confirm), null)
+                    .setNegativeButton(getResources().getString(R.string.dialog_button_cancel), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-                            }
-                        })
-                        .show();
-                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        int port = 5656;
-                        try {
-                            port = Integer.parseInt(edit.getText().toString().trim());
-                            if (!(port >= 1024 && port <= 65535)) {
-                                Toast.makeText(getActivity(), getResources().getString(R.string.attention_port_number_out_of_range), Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(getActivity(), getResources().getString(R.string.attention_invalid_port_number), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .show();
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int port = 5656;
+                    try {
+                        port = Integer.parseInt(edit.getText().toString().trim());
+                        if (!(port >= 1024 && port <= 65535)) {
+                            Toast.makeText(getActivity(), getResources().getString(R.string.attention_port_number_out_of_range), Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        if (FtpService.isFTPServiceRunning()) {
-                            Toast.makeText(getActivity(), getResources().getString(R.string.attention_ftp_is_running), Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        editor.putInt(Constants.PreferenceConsts.PORT_NUMBER, port);
-                        editor.apply();
-                        dialog.cancel();
-                        tv_port.setText(String.valueOf(port));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getActivity(), getResources().getString(R.string.attention_invalid_port_number), Toast.LENGTH_SHORT).show();
+                        return;
                     }
-                });
-            }
-            break;
-            case R.id.charset_area: {
-                if (FtpService.isFTPServiceRunning()) {
-                    CommonUtils.showSnackBarOfFtpServiceIsRunning(getActivity());
-                    return;
-                }
-                final AlertDialog dialog = new AlertDialog.Builder(getActivity())
-                        .setTitle(getResources().getString(R.string.item_charset))
-                        .setView(R.layout.layout_dialog_charset)
-                        .show();
-                RadioButton ra_utf = dialog.findViewById(R.id.charset_selection_utf);
-                RadioButton ra_gbk = dialog.findViewById(R.id.charset_selection_gbk);
-                String selection = settings.getString(Constants.PreferenceConsts.CHARSET_TYPE, Constants.PreferenceConsts.CHARSET_TYPE_DEFAULT);
-                if (ra_utf != null) ra_utf.setChecked(Constants.Charset.CHAR_UTF.equals(selection));
-                if (ra_gbk != null) ra_gbk.setChecked(Constants.Charset.CHAR_GBK.equals(selection));
-                if (ra_utf != null) ra_utf.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        editor.putString(Constants.PreferenceConsts.CHARSET_TYPE, Constants.Charset.CHAR_UTF);
-                        editor.apply();
-                        dialog.cancel();
-                        if (getActivity() != null)
-                            tv_charset.setText(CommonUtils.getDisplayCharsetValue(getActivity()));
+                    if (FtpService.isFTPServiceRunning()) {
+                        Toast.makeText(getActivity(), getResources().getString(R.string.attention_ftp_is_running), Toast.LENGTH_SHORT).show();
+                        return;
                     }
-                });
-                if (ra_gbk != null) ra_gbk.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        editor.putString(Constants.PreferenceConsts.CHARSET_TYPE, Constants.Charset.CHAR_GBK);
-                        editor.apply();
-                        dialog.cancel();
-                        if (getActivity() != null)
-                            tv_charset.setText(CommonUtils.getDisplayCharsetValue(getActivity()));
-                    }
-                });
-            }
-            break;
-            case R.id.wakelock_area: {
-                if (settings.getBoolean(Constants.PreferenceConsts.WAKE_LOCK, Constants.PreferenceConsts.WAKE_LOCK_DEFAULT)) {
-                    cb_wakelock.setChecked(false);
-                    FtpService.sendEmptyMessage(FtpService.MESSAGE_WAKELOCK_RELEASE);
-                    editor.putBoolean(Constants.PreferenceConsts.WAKE_LOCK, false);
+                    editor.putInt(Constants.PreferenceConsts.PORT_NUMBER, port);
                     editor.apply();
-                } else {
-                    cb_wakelock.setChecked(true);
-                    FtpService.sendEmptyMessage(FtpService.MESSAGE_WAKELOCK_ACQUIRE);
-                    editor.putBoolean(Constants.PreferenceConsts.WAKE_LOCK, true);
+                    dialog.cancel();
+                    tv_port.setText(String.valueOf(port));
+                }
+            });
+        } else if (id == R.id.charset_area) {
+            if (FtpService.isFTPServiceRunning()) {
+                CommonUtils.showSnackBarOfFtpServiceIsRunning(getActivity());
+                return;
+            }
+            final AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                    .setTitle(getResources().getString(R.string.item_charset))
+                    .setView(R.layout.layout_dialog_charset)
+                    .show();
+            RadioButton ra_utf = dialog.findViewById(R.id.charset_selection_utf);
+            RadioButton ra_gbk = dialog.findViewById(R.id.charset_selection_gbk);
+            String selection = settings.getString(Constants.PreferenceConsts.CHARSET_TYPE, Constants.PreferenceConsts.CHARSET_TYPE_DEFAULT);
+            if (ra_utf != null) ra_utf.setChecked(Constants.Charset.CHAR_UTF.equals(selection));
+            if (ra_gbk != null) ra_gbk.setChecked(Constants.Charset.CHAR_GBK.equals(selection));
+            if (ra_utf != null) ra_utf.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    editor.putString(Constants.PreferenceConsts.CHARSET_TYPE, Constants.Charset.CHAR_UTF);
                     editor.apply();
+                    dialog.cancel();
+                    if (getActivity() != null)
+                        tv_charset.setText(CommonUtils.getDisplayCharsetValue(getActivity()));
                 }
-            }
-            break;
-            case R.id.setting_area: {
-                getActivity().startActivityForResult(new Intent(getActivity(), ServiceAccountActivity.class), 0);
-            }
-            break;
-            case R.id.ftp_addresses_area: {
-                if (!FtpService.isFTPServiceRunning()) {
-                    return;
+            });
+            if (ra_gbk != null) ra_gbk.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    editor.putString(Constants.PreferenceConsts.CHARSET_TYPE, Constants.Charset.CHAR_GBK);
+                    editor.apply();
+                    dialog.cancel();
+                    if (getActivity() != null)
+                        tv_charset.setText(CommonUtils.getDisplayCharsetValue(getActivity()));
                 }
-                new FtpAddressesDialog(getActivity()).show();
+            });
+        } else if (id == R.id.wakelock_area) {
+            if (settings.getBoolean(Constants.PreferenceConsts.WAKE_LOCK, Constants.PreferenceConsts.WAKE_LOCK_DEFAULT)) {
+                cb_wakelock.setChecked(false);
+                FtpService.sendEmptyMessage(FtpService.MESSAGE_WAKELOCK_RELEASE);
+                editor.putBoolean(Constants.PreferenceConsts.WAKE_LOCK, false);
+                editor.apply();
+            } else {
+                cb_wakelock.setChecked(true);
+                FtpService.sendEmptyMessage(FtpService.MESSAGE_WAKELOCK_ACQUIRE);
+                editor.putBoolean(Constants.PreferenceConsts.WAKE_LOCK, true);
+                editor.apply();
             }
-            break;
-            case R.id.anonymous_connect_num_area: {
-                if (FtpService.isFTPServiceRunning()) {
-                    CommonUtils.showSnackBarOfFtpServiceIsRunning(getActivity());
-                    return;
-                }
-                inlineMethod(Constants.PreferenceConsts.MAX_ANONYMOUS_NUM, R.string.item_anonymous_num);
+        } else if (id == R.id.setting_area) {
+            getActivity().startActivityForResult(new Intent(getActivity(), ServiceAccountActivity.class), 0);
+        } else if (id == R.id.ftp_addresses_area) {
+            if (!FtpService.isFTPServiceRunning()) {
+                return;
             }
-            break;
-            case R.id.login_connect_num_area: {
-                if (FtpService.isFTPServiceRunning()) {
-                    CommonUtils.showSnackBarOfFtpServiceIsRunning(getActivity());
-                    return;
-                }
-                inlineMethod(Constants.PreferenceConsts.MAX_LOGIN_NUM, R.string.item_login_num);
+            new FtpAddressesDialog(getActivity()).show();
+        } else if (id == R.id.anonymous_connect_num_area) {
+            if (FtpService.isFTPServiceRunning()) {
+                CommonUtils.showSnackBarOfFtpServiceIsRunning(getActivity());
+                return;
             }
-            break;
+            inlineMethod(Constants.PreferenceConsts.MAX_ANONYMOUS_NUM, R.string.item_anonymous_num);
+        } else if (id == R.id.login_connect_num_area) {
+            if (FtpService.isFTPServiceRunning()) {
+                CommonUtils.showSnackBarOfFtpServiceIsRunning(getActivity());
+                return;
+            }
+            inlineMethod(Constants.PreferenceConsts.MAX_LOGIN_NUM, R.string.item_login_num);
         }
     }
 

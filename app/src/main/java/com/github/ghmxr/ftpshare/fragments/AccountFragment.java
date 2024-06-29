@@ -73,47 +73,41 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         if (getActivity() == null || getContext() == null || getView() == null) return;
-        switch (v.getId()) {
-            default:
-                break;
-            case R.id.anonymous_path: {
-                if (FtpService.isFTPServiceRunning()) {
-                    CommonUtils.showSnackBarOfFtpServiceIsRunning(getActivity());
-                    return;
-                }
-                if (Build.VERSION.SDK_INT >= 23 && PermissionChecker.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PermissionChecker.PERMISSION_GRANTED) {
-                    CommonUtils.showSnackBarOfRequestingWritingPermission(getActivity());
-                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
-                    return;
-                }
-                final Activity activity = getActivity();
-                DialogOfFolderSelector dialog = new DialogOfFolderSelector(activity,
-                        String.valueOf(settings.getString(Constants.PreferenceConsts.ANONYMOUS_MODE_PATH, Constants.PreferenceConsts.ANONYMOUS_MODE_PATH_DEFAULT)));
-                dialog.show();
-                dialog.setOnFolderSelectorDialogConfirmedListener(new DialogOfFolderSelector.OnFolderSelectorDialogConfirmed() {
-                    @Override
-                    public void onFolderSelectorDialogConfirmed(String path) {
-                        if (FtpService.isFTPServiceRunning()) {
-                            Toast.makeText(activity, getResources().getString(R.string.attention_ftp_is_running), Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        editor.putString(Constants.PreferenceConsts.ANONYMOUS_MODE_PATH, path);
-                        editor.apply();
-                        anonymous_path.setText(path);
+        int id = v.getId();
+        if (id == R.id.anonymous_path) {
+            if (FtpService.isFTPServiceRunning()) {
+                CommonUtils.showSnackBarOfFtpServiceIsRunning(getActivity());
+                return;
+            }
+            if (Build.VERSION.SDK_INT >= 23 && PermissionChecker.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PermissionChecker.PERMISSION_GRANTED) {
+                CommonUtils.showSnackBarOfRequestingWritingPermission(getActivity());
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+                return;
+            }
+            final Activity activity = getActivity();
+            DialogOfFolderSelector dialog = new DialogOfFolderSelector(activity,
+                    String.valueOf(settings.getString(Constants.PreferenceConsts.ANONYMOUS_MODE_PATH, Constants.PreferenceConsts.ANONYMOUS_MODE_PATH_DEFAULT)));
+            dialog.show();
+            dialog.setOnFolderSelectorDialogConfirmedListener(new DialogOfFolderSelector.OnFolderSelectorDialogConfirmed() {
+                @Override
+                public void onFolderSelectorDialogConfirmed(String path) {
+                    if (FtpService.isFTPServiceRunning()) {
+                        Toast.makeText(activity, getResources().getString(R.string.attention_ftp_is_running), Toast.LENGTH_SHORT).show();
+                        return;
                     }
-                });
-            }
-            break;
-            case R.id.anonymous_writable: {
-                if (FtpService.isFTPServiceRunning()) {
-                    CommonUtils.showSnackBarOfFtpServiceIsRunning(getActivity());
-                    return;
+                    editor.putString(Constants.PreferenceConsts.ANONYMOUS_MODE_PATH, path);
+                    editor.apply();
+                    anonymous_path.setText(path);
                 }
-                writable_cb.toggle();
-                editor.putBoolean(Constants.PreferenceConsts.ANONYMOUS_MODE_WRITABLE, writable_cb.isChecked());
-                editor.apply();
+            });
+        } else if (id == R.id.anonymous_writable) {
+            if (FtpService.isFTPServiceRunning()) {
+                CommonUtils.showSnackBarOfFtpServiceIsRunning(getActivity());
+                return;
             }
-            break;
+            writable_cb.toggle();
+            editor.putBoolean(Constants.PreferenceConsts.ANONYMOUS_MODE_WRITABLE, writable_cb.isChecked());
+            editor.apply();
         }
     }
 

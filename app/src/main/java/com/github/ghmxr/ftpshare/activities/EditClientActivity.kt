@@ -28,8 +28,8 @@ class EditClientActivity : ClientInfoActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == R.id.action_account_delete) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_account_delete) {
             val current = System.currentTimeMillis()
             if (current - lastClick > 2000L) {
                 lastClick = current
@@ -41,7 +41,7 @@ class EditClientActivity : ClientInfoActivity() {
                 finish()
             }
         }
-        if (item?.itemId == R.id.action_account_save) {
+        if (item.itemId == R.id.action_account_save) {
             if (saveOrUpdateClientBean()) {
                 setResult(RESULT_OK)
                 finish()

@@ -107,8 +107,8 @@ open class FolderSelectorActivity : BaseActivity() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.action_cancel -> {
                 setResult(RESULT_CANCELED)
                 finish()

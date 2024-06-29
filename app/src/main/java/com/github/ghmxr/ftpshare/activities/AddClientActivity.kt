@@ -23,8 +23,8 @@ class AddClientActivity : ClientInfoActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == R.id.action_account_add_save) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.action_account_add_save) {
             if (saveOrUpdateClientBean()) {
                 setResult(RESULT_OK)
                 finish()

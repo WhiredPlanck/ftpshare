@@ -59,63 +59,53 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()) {
-            default:
-                break;
-            case R.id.setting_night_mode: {
-                new RadioSelectionDialog<>(this, getResources().getString(R.string.setting_night_mode),
-                        new String[]{getResources().getString(R.string.setting_night_mode_auto), getResources().getString(R.string.setting_night_mode_disabled),
-                                getResources().getString(R.string.setting_night_mode_enabled), getResources().getString(R.string.setting_night_mode_follow_system)},
-                        new Integer[]{AppCompatDelegate.MODE_NIGHT_AUTO, AppCompatDelegate.MODE_NIGHT_NO, AppCompatDelegate.MODE_NIGHT_YES, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM},
-                        settings.getInt(Constants.PreferenceConsts.NIGHT_MODE, Constants.PreferenceConsts.NIGHT_MODE_DEFAULT),
-                        new RadioSelectionDialog.ConfirmedCallback<Integer>() {
-                            @Override
-                            public void onConfirmed(String selection, Integer value) {
-                                editor.putInt(Constants.PreferenceConsts.NIGHT_MODE, value);
-                                editor.apply();
-                                resultCode = RESULT_OK;
-                                AppCompatDelegate.setDefaultNightMode(value);
-                                recreate();
-                            }
-                        }).show();
-            }
-            break;
-            case R.id.setting_language: {
-                new RadioSelectionDialog<>(this, getResources().getString(R.string.setting_language),
-                        new String[]{getResources().getString(R.string.setting_language_follow_system),
-                                getResources().getString(R.string.setting_language_chinese),
-                                getResources().getString(R.string.setting_language_english)},
-                        new Integer[]{Constants.PreferenceConsts.LANGUAGE_FOLLOW_SYSTEM, Constants.PreferenceConsts.LANGUAGE_SIMPLIFIED_CHINESE,
-                                Constants.PreferenceConsts.LANGUAGE_ENGLISH},
-                        settings.getInt(Constants.PreferenceConsts.LANGUAGE_SETTING, Constants.PreferenceConsts.LANGUAGE_SETTING_DEFAULT),
-                        new RadioSelectionDialog.ConfirmedCallback<Integer>() {
-                            @Override
-                            public void onConfirmed(String selection, Integer value) {
-                                resultCode = RESULT_OK;
-                                editor.putInt(Constants.PreferenceConsts.LANGUAGE_SETTING, value);
-                                editor.apply();
-                                recreate();
-                            }
-                        }).show();
-            }
-            break;
-            case R.id.setting_disconnect: {
-                DisconnectSelectionDialog dialog = new DisconnectSelectionDialog(this);
-                dialog.show();
-                dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                    @Override
-                    public void onCancel(DialogInterface dialog) {
-                        refreshSettingValues();
-                    }
-                });
-            }
-            break;
-            case R.id.setting_auto_start: {
-                cb_auto_start.toggle();
-                editor.putBoolean(Constants.PreferenceConsts.START_AFTER_BOOT, cb_auto_start.isChecked());
-                editor.apply();
-            }
-            break;
+        int id = v.getId();
+        if (id == R.id.setting_night_mode) {
+            new RadioSelectionDialog<>(this, getResources().getString(R.string.setting_night_mode),
+                    new String[]{getResources().getString(R.string.setting_night_mode_auto), getResources().getString(R.string.setting_night_mode_disabled),
+                            getResources().getString(R.string.setting_night_mode_enabled), getResources().getString(R.string.setting_night_mode_follow_system)},
+                    new Integer[]{AppCompatDelegate.MODE_NIGHT_AUTO, AppCompatDelegate.MODE_NIGHT_NO, AppCompatDelegate.MODE_NIGHT_YES, AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM},
+                    settings.getInt(Constants.PreferenceConsts.NIGHT_MODE, Constants.PreferenceConsts.NIGHT_MODE_DEFAULT),
+                    new RadioSelectionDialog.ConfirmedCallback<Integer>() {
+                        @Override
+                        public void onConfirmed(String selection, Integer value) {
+                            editor.putInt(Constants.PreferenceConsts.NIGHT_MODE, value);
+                            editor.apply();
+                            resultCode = RESULT_OK;
+                            AppCompatDelegate.setDefaultNightMode(value);
+                            recreate();
+                        }
+                    }).show();
+        } else if (id == R.id.setting_language) {
+            new RadioSelectionDialog<>(this, getResources().getString(R.string.setting_language),
+                    new String[]{getResources().getString(R.string.setting_language_follow_system),
+                            getResources().getString(R.string.setting_language_chinese),
+                            getResources().getString(R.string.setting_language_english)},
+                    new Integer[]{Constants.PreferenceConsts.LANGUAGE_FOLLOW_SYSTEM, Constants.PreferenceConsts.LANGUAGE_SIMPLIFIED_CHINESE,
+                            Constants.PreferenceConsts.LANGUAGE_ENGLISH},
+                    settings.getInt(Constants.PreferenceConsts.LANGUAGE_SETTING, Constants.PreferenceConsts.LANGUAGE_SETTING_DEFAULT),
+                    new RadioSelectionDialog.ConfirmedCallback<Integer>() {
+                        @Override
+                        public void onConfirmed(String selection, Integer value) {
+                            resultCode = RESULT_OK;
+                            editor.putInt(Constants.PreferenceConsts.LANGUAGE_SETTING, value);
+                            editor.apply();
+                            recreate();
+                        }
+                    }).show();
+        } else if (id == R.id.setting_disconnect) {
+            DisconnectSelectionDialog dialog = new DisconnectSelectionDialog(this);
+            dialog.show();
+            dialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    refreshSettingValues();
+                }
+            });
+        } else if (id == R.id.setting_auto_start) {
+            cb_auto_start.toggle();
+            editor.putBoolean(Constants.PreferenceConsts.START_AFTER_BOOT, cb_auto_start.isChecked());
+            editor.apply();
         }
     }
 
