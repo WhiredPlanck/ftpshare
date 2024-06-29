@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 28
+    namespace "com.github.ghmxr.ftpshare"
     defaultConfig {
         applicationId "com.github.ghmxr.ftpshare"
         minSdkVersion 14
